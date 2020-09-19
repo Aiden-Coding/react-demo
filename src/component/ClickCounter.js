@@ -3,7 +3,7 @@ class ClickCounter extends Component{
   constructor(props){
     super(props);
     this.onClickButton=this.onClickButton.bind(this);
-    this.state={count:0}
+    this.state={count: this.props.initValue || 0}
   }
   onClickButton(){
     this.setState({count:this.state.count+1});
