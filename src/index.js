@@ -1,9 +1,7 @@
 import dva from 'dva';
 import './index.css';
 import createHistory from 'history/createBrowserHistory';
-import config from './utils/config';
 
-export { config };
 // 1. Initialize
 const app = dva({
   history: createHistory(),
