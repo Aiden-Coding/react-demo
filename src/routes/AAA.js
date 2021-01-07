@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'dva/router';
 import { Button } from 'antd';
+import { DoubleLeftOutlined } from '@ant-design/icons';
 
 class AAA extends Component {
   render() {
@@ -8,13 +9,15 @@ class AAA extends Component {
       <div>
         <p>AAA页</p>
         <Link to={'/aaa/bbb'}>
-          <Button type={'primary'} icon={'link'}>
+          <Button type={'primary'}>
+            <DoubleLeftOutlined />
             去BBB页面
           </Button>
         </Link>
         <br />
         <Link to={'/ccc'}>
-          <Button type={'default'} icon={'enter'}>
+          <Button type={'default'}>
+          <DoubleLeftOutlined />
             去CCC页面
           </Button>
         </Link>
