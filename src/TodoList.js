@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import './style.css';
 import TodoItem from './TodoItem';
+import axios from 'axios'
 class TodoList extends Component {
   constructor(props) {
     super(props);
@@ -33,6 +34,44 @@ class TodoList extends Component {
     });
     console.log(index);
   };
+
+  handleItemDelete = (index)=> {
+    const tmpList = [...this.state.list];
+    tmpList.splice(index, 1);
+    this.setState({
+      list: tmpList,
+    });
+    console.log(index);
+  };
+  getTodoItem() {
+    return this.state.list.map((item, index) => {
+      return (
+        // <li key={index} onClick={this.handleDeleteListItem.bind(this,index)}>
+        //   {item}
+        // </li>
+        // <li key={index} onClick={()=>this.handleDeleteListItem(index)}>
+        // <li
+        //   key={index}
+        //   onClick={() => this.handleDeleteListItem(index)}
+        //   // 渲染html脚本
+        //   dangerouslySetInnerHTML={{ __html: item }}
+        // >
+        //   {/* {item} */}
+        // </li>
+        <TodoItem
+          content={item}
+          index={index}
+          key={index}
+          itemDelete={this.handleItemDelete}
+        />
+      );
+    });
+  }
+  componentDidMount() {
+    axios.get('/api/todoList')
+    .then(()=>{alert('succ')})
+    .catch(()=>{alert('fail')})
+  }
   render() {
     return (
       // 占位符
@@ -51,27 +90,7 @@ class TodoList extends Component {
           {/* <button onClick={this.handleBtnClick.bind(this)}>提交</button> */}
         </div>
         <ul>
-          {this.state.list.map((item, index) => {
-            return (
-              // <li key={index} onClick={this.handleDeleteListItem.bind(this,index)}>
-              //   {item}
-              // </li>
-              // <li key={index} onClick={()=>this.handleDeleteListItem(index)}>
-              // <li
-              //   key={index}
-              //   onClick={() => this.handleDeleteListItem(index)}
-              //   // 渲染html脚本
-              //   dangerouslySetInnerHTML={{ __html: item }}
-              // >
-              //   {/* {item} */}
-              // </li>
-              <TodoItem
-                content={item}
-                index={index}
-                itemDelete={this.handleItemDelete.bind(this)}
-              />
-            );
-          })}
+          {this.getTodoItem()}
         </ul>
       </Fragment>
     );
