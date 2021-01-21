@@ -1,99 +1,123 @@
-import React, { Component, Fragment } from 'react';
-import './style.css';
-import TodoItem from './TodoItem';
-import axios from 'axios'
+import React, { Component } from 'react';
+import 'antd/dist/antd.css';
+import { Input, Button, List, message, Row, Col } from 'antd';
+import axios from 'axios';
+import store from './store/index';
+import { getInputChangeAction, getAddTodoItem, getDelData, getCleanData } from './store/actionCreators';
+import { CHANGE_INPUT_INPUTVALUE, ADD_TODO_ITEM, DEL_DATA } from './store/actionType';
+
 class TodoList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      inputValue: '',
-      list: ['学习'],
-    };
-  }
-  handleInputChange(e) {
-    this.setState({
-      inputValue: e.target.value,
-    });
-    console.log(e.target.value);
-  }
-  handleBtnClick() {
-    this.setState({
-      list: [...this.state.list, this.state.inputValue],
-      inputValue: '',
-    });
-  }
 
-  // handleDeleteListItem(index){
-  //   console.log(index)
-  //  };
-  handleDeleteListItem = (index) => {
-    const tmpList = [...this.state.list];
-    tmpList.splice(index, 1);
-    this.setState({
-      list: tmpList,
-    });
-    console.log(index);
-  };
+    //Store部分
+    this.state = store.getState();
+    //输出store的数据
+    this.handleStoreChange = this.handleStoreChange.bind(this);
+    console.log(this.state);
 
-  handleItemDelete = (index)=> {
-    const tmpList = [...this.state.list];
-    tmpList.splice(index, 1);
-    this.setState({
-      list: tmpList,
-    });
-    console.log(index);
-  };
-  getTodoItem() {
-    return this.state.list.map((item, index) => {
-      return (
-        // <li key={index} onClick={this.handleDeleteListItem.bind(this,index)}>
-        //   {item}
-        // </li>
-        // <li key={index} onClick={()=>this.handleDeleteListItem(index)}>
-        // <li
-        //   key={index}
-        //   onClick={() => this.handleDeleteListItem(index)}
-        //   // 渲染html脚本
-        //   dangerouslySetInnerHTML={{ __html: item }}
-        // >
-        //   {/* {item} */}
-        // </li>
-        <TodoItem
-          content={item}
-          index={index}
-          key={index}
-          itemDelete={this.handleItemDelete}
-        />
-      );
-    });
+    this.handleAdd = this.handleAdd.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleDel = this.handleDel.bind(this);
+    this.handleClean = this.handleClean.bind(this);
+    this.handleAjax = this.handleAjax.bind(this);
   }
   componentDidMount() {
-    axios.get('/api/todoList')
-    .then(()=>{alert('succ')})
-    .catch(()=>{alert('fail')})
+    store.subscribe(this.handleStoreChange);
   }
   render() {
     return (
-      // 占位符
-      <Fragment>
-        <div>
-          {/* htmlfor  聚焦 */}
-          <label htmlFor="insertArea">请输入内容</label>
-          <input
-            id="insertArea"
-            className="input"
-            value={this.state.inputValue}
-            onChange={this.handleInputChange.bind(this)}
-            // onChange={()=>this.handleInputChange}
-          />
-          <button onClick={() => this.handleBtnClick()}>提交</button>
-          {/* <button onClick={this.handleBtnClick.bind(this)}>提交</button> */}
-        </div>
-        <ul>
-          {this.getTodoItem()}
-        </ul>
-      </Fragment>
+      <div style={{ margin: '10px' }}>
+        <Input
+          value={this.state.inputValue}
+          placeholder="add todo"
+          onChange={this.handleChange}
+          style={{ width: '60%' }}
+        />
+        <Button type="primary" onClick={this.handleAdd}>
+          Add
+        </Button>
+        <Button type="primary" onClick={this.handleAjax}>
+          Export
+        </Button>
+        <Button type="primary" onClick={this.handleClean}>
+          Clean
+        </Button>
+        <List
+          header={<div style={{ textAlign: 'center' }}>** TodoList **</div>}
+          footer={<div style={{ textAlign: 'center', fontSize: '10px' }}> Copyright Rain </div>}
+          bordered
+          dataSource={this.state.dataObj}
+          renderItem={(item) => (
+            <List.Item onClick={this.handleDel}>
+              <ul>
+                <li>{item}</li>
+              </ul>
+            </List.Item>
+          )}
+          style={{ width: '20rem', margin: '0.5rem' }}
+        />
+      </div>
     );
   }
+
+  handleAdd() {
+    //redux
+    const action = getAddTodoItem();
+    store.dispatch(action);
+  }
+  handleStoreChange() {
+    this.setState(store.getState());
+  }
+  handleChange(e) {
+    //redux
+    const action = getInputChangeAction(e.target.value);
+    store.dispatch(action);
+  }
+
+  handleDel(index) {
+    //redux
+    const action = getDelData(index);
+    store.dispatch(action);
+  }
+
+  handleClean() {
+
+    this.setState(
+      () => {
+        return {
+          dataObj: [],
+        };
+      },
+      () => {
+        const action = getCleanData();
+        store.dispatch(action);
+        message.success('Cleaning successed!', 0.4);
+      },
+    );
+  }
+
+  handleAjax() {
+    axios
+      .get('/todoList.json')
+      .then((res) => {
+        console.log(res.data);
+
+        this.setState(
+          () => {
+            return {
+              dataObj: [...this.state.dataObj.concat(res.data)],
+            };
+          },
+          () => {
+            message.success('Exportint successed!', 0.4);
+          },
+        );
+      })
+      .catch(() => {
+        message.error('Fail to export!', 1);
+      });
+  }
 }
+
 export default TodoList;
