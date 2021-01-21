@@ -5,7 +5,7 @@ import axios from 'axios';
 import store from './store/index';
 import { getInputChangeAction, getAddTodoItem, getDelData, getCleanData } from './store/actionCreators';
 import { CHANGE_INPUT_INPUTVALUE, ADD_TODO_ITEM, DEL_DATA } from './store/actionType';
-
+import TodoListUI from './TodoListUi'
 class TodoList extends Component {
   constructor(props) {
     super(props);
@@ -27,37 +27,15 @@ class TodoList extends Component {
   }
   render() {
     return (
-      <div style={{ margin: '10px' }}>
-        <Input
-          value={this.state.inputValue}
-          placeholder="add todo"
-          onChange={this.handleChange}
-          style={{ width: '60%' }}
-        />
-        <Button type="primary" onClick={this.handleAdd}>
-          Add
-        </Button>
-        <Button type="primary" onClick={this.handleAjax}>
-          Export
-        </Button>
-        <Button type="primary" onClick={this.handleClean}>
-          Clean
-        </Button>
-        <List
-          header={<div style={{ textAlign: 'center' }}>** TodoList **</div>}
-          footer={<div style={{ textAlign: 'center', fontSize: '10px' }}> Copyright Rain </div>}
-          bordered
-          dataSource={this.state.dataObj}
-          renderItem={(item) => (
-            <List.Item onClick={this.handleDel}>
-              <ul>
-                <li>{item}</li>
-              </ul>
-            </List.Item>
-          )}
-          style={{ width: '20rem', margin: '0.5rem' }}
-        />
-      </div>
+      <TodoListUI
+      inputValue={this.state.inputValue}
+      handleChange={this.handleChange}
+      handleAdd={this.handleAdd}
+      handleAjax={this.handleAjax}
+      handleClean={this.handleClean}
+      handleDel={this.handleDel}
+      dataObj={this.state.dataObj}
+      />
     );
   }
 
