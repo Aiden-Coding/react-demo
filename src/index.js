@@ -2,11 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TodoList from './TodoList';
 import * as serviceWorker from './serviceWorker';
-
+//使用react-redux
+import {Provider} from 'react-redux'
+import store from './store/index'
+const App = (
+  <Provider store={store}>
+      <TodoList/>
+  </Provider>
+)
 ReactDOM.render(
-  <React.StrictMode>
-    <TodoList />
-  </React.StrictMode>,
+  App,
   document.getElementById('root')
 );
 

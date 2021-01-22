@@ -1,103 +1,67 @@
 import React, { Component } from 'react';
-import 'antd/dist/antd.css';
-import { Input, Button, List, message, Row, Col } from 'antd';
-import axios from 'axios';
-import store from './store/index';
-import { getInputChangeAction, getAddTodoItem, getDelData, getCleanData, getTodoList } from './store/actionCreators';
-import { CHANGE_INPUT_INPUTVALUE, ADD_TODO_ITEM, DEL_DATA } from './store/actionType';
-import TodoListUI from './TodoListUi'
-class TodoList extends Component {
-  constructor(props) {
-    super(props);
+import { connect } from 'react-redux';
 
-    //Store部分
-    this.state = store.getState();
-    //输出store的数据
-    this.handleStoreChange = this.handleStoreChange.bind(this);
-    console.log(this.state);
+class Todolist extends Component {
+  // 疑问一 怎么获取todolist的父组件传来的值
 
-    this.handleAdd = this.handleAdd.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleDel = this.handleDel.bind(this);
-    this.handleClean = this.handleClean.bind(this);
-    this.handleAjax = this.handleAjax.bind(this);
-  }
-  componentDidMount() {
-    store.subscribe(this.handleStoreChange);
-    const action = getTodoList();
-    store.dispatch(action);
-  }
+  // constructor(props){
+  //     super(props)
+  //     console.log(props)
+  //     const newName = props.title
+  //     this.setState({
+  //         title:newName
+  //     })
+  // }
+
   render() {
     return (
-      <TodoListUI
-      inputValue={this.state.inputValue}
-      handleChange={this.handleChange}
-      handleAdd={this.handleAdd}
-      handleAjax={this.handleAjax}
-      handleClean={this.handleClean}
-      handleDel={this.handleDel}
-      dataObj={this.state.dataObj}
-      />
+      <div>
+        <div>
+          <h1>Hello World!!!</h1>
+
+          <input value={this.props.inputValue} onChange={this.props.ChangeInput} />
+          <button onClick={this.props.handleSubmit}>提交</button>
+        </div>
+
+        <ul>
+          {this.props.list.map((item, index) => {
+            return <li key={index}>{item}</li>;
+          })}
+        </ul>
+      </div>
     );
-  }
-
-  handleAdd() {
-    //redux
-    const action = getAddTodoItem();
-    store.dispatch(action);
-  }
-  handleStoreChange() {
-    this.setState(store.getState());
-  }
-  handleChange(e) {
-    //redux
-    const action = getInputChangeAction(e.target.value);
-    store.dispatch(action);
-  }
-
-  handleDel(index) {
-    //redux
-    const action = getDelData(index);
-    store.dispatch(action);
-  }
-
-  handleClean() {
-
-    this.setState(
-      () => {
-        return {
-          dataObj: [],
-        };
-      },
-      () => {
-        const action = getCleanData();
-        store.dispatch(action);
-        message.success('Cleaning successed!', 0.4);
-      },
-    );
-  }
-
-  handleAjax() {
-    axios
-      .get('/todoList.json')
-      .then((res) => {
-        console.log(res.data);
-
-        this.setState(
-          () => {
-            return {
-              dataObj: [...this.state.dataObj.concat(res.data)],
-            };
-          },
-          () => {
-            message.success('Exportint successed!', 0.4);
-          },
-        );
-      })
-      .catch(() => {
-        message.error('Fail to export!', 1);
-      });
   }
 }
 
-export default TodoList;
+// 定义映射关系   把store的数据    用props父子组件传值的方式传给todolist
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    inputValue: state.inputValue,
+    list: state.list,
+  };
+};
+
+// store.dispatch 挂载到props上  改变store的内容 必须触发dispatch
+const mapDispatchToprops = (dispatch) => {
+  return {
+    ChangeInput(e) {
+      const action = {
+        type: 'change_input_value',
+        value: e.target.value,
+      };
+      // console.log(e.target.value)
+      dispatch(action);
+    },
+
+    handleSubmit() {
+      const action = {
+        type: 'add_item',
+      };
+      dispatch(action);
+    },
+  };
+};
+
+// connect 方法就是让todolist跟store做连接
+export default connect(mapStateToProps, mapDispatchToprops)(Todolist);
