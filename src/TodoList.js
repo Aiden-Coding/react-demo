@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Input, Button, List, message, Row, Col } from 'antd';
 import axios from 'axios';
 import store from './store/index';
-import { getInputChangeAction, getAddTodoItem, getDelData, getCleanData } from './store/actionCreators';
+import { getInputChangeAction, getAddTodoItem, getDelData, getCleanData, getTodoList } from './store/actionCreators';
 import { CHANGE_INPUT_INPUTVALUE, ADD_TODO_ITEM, DEL_DATA } from './store/actionType';
 import TodoListUI from './TodoListUi'
 class TodoList extends Component {
@@ -24,6 +24,8 @@ class TodoList extends Component {
   }
   componentDidMount() {
     store.subscribe(this.handleStoreChange);
+    const action = getTodoList();
+    store.dispatch(action);
   }
   render() {
     return (
