@@ -9,10 +9,47 @@ import {
   NavItem,
   SearchWrapper,
   NavSearch,
+  SearchInfo,
+  SearchInfoTitle,
+  SearchInfoSwitch,
+  SearchInfoItem,
+  SearchInfoList,
   Addition,
   Button,
 } from './style';
+const getListArea = (show,pageList) => {
+  if(show) {
+    return (
+      <SearchInfo>
+            <SearchInfoTitle>
+              热门搜索
+              <SearchInfoSwitch>
+                换一批
+              </SearchInfoSwitch>
+            </SearchInfoTitle>
+            <SearchInfoList>
+						{pageList}
+					</SearchInfoList>
+          </SearchInfo>
+    )
+  } else{
+    return null;
+  }
+}
 const Header = (props) => {
+  const newList = ['list.toJS()'];
+  const pageList = [];
+
+		if (newList.length) {
+			// for (let i = (page - 1) * 10; i < page * 10; i++) {
+			// 	pageList.push(
+			// 		<SearchInfoItem key={newList[i]}>{newList[i]}</SearchInfoItem>
+			// 	)
+      // }
+      pageList.push(
+        <SearchInfoItem key={newList[0]}>{newList[0]}</SearchInfoItem>
+      )
+		}
   return (
     <HeaderWrapper>
       <Logo href="/" />
@@ -32,6 +69,7 @@ const Header = (props) => {
             ></NavSearch>
           </CSSTransition>
           <span className="iconfont">&#xe62b;</span>
+         {getListArea(props.focused,pageList)}
         </SearchWrapper>
       </Nav>
       <Addition>
@@ -78,7 +116,7 @@ const Header = (props) => {
 // }
 const mapStateToProps = (state) => {
   return {
-    focused: state.getIn(['header','focused'])
+    focused: state.getIn(['header', 'focused']),
     // state.get('header').get('focused'),
   };
 };
