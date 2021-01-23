@@ -1,17 +1,17 @@
-import * as constants from './constants'
+import { constants } from '.';
 const defaultState = {
-  focused: false
+  focused: false,
 };
 export default (state = defaultState, action) => {
-  if(action.type === constants.SEARCH_FOCUS) {
+  if (action.type === constants.SEARCH_FOCUS) {
     return {
-      focused: true
-    }
+      focused: true,
+    };
   }
-  if(action.type === constants.SEARCH_BLUR) {
+  if (action.type === constants.SEARCH_BLUR) {
     return {
-      focused: false
-    }
+      focused: false,
+    };
   }
   return state;
-}
+};
